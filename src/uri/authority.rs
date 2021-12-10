@@ -3,12 +3,13 @@ use nom::{
     error::context, sequence,
 };
 
-use crate::lib::CustomResult;
+use crate::uri::CustomResult;
 
-pub type Authority<'a> = (
-    &'a str,         // username
-    Option<&'a str>, // optional password
-);
+#[derive(Debug, PartialEq, Eq)]
+pub struct Authority<'a> {
+    pub user: &'a str,             // username
+    pub password: Option<&'a str>, // optional password
+}
 
 pub fn authority_parser(input: &str) -> CustomResult<&str, Authority> {
     context(
@@ -23,6 +24,11 @@ pub fn authority_parser(input: &str) -> CustomResult<&str, Authority> {
             tag("@"), // the sequence terminator
         ),
     )(input)
+    .map(|(next_input, res)| {
+        let user = res.0;
+        let password = res.1;
+        (next_input, Authority { user, password })
+    })
 }
 
 #[cfg(test)]
@@ -37,13 +43,24 @@ mod tests {
     fn test_authority_parser() {
         assert_eq!(
             authority_parser("username:password@zupzup.org"),
-            Ok(("zupzup.org", ("username", Some("password"))))
+            Ok((
+                "zupzup.org",
+                Authority {
+                    user: "username",
+                    password: Some("password")
+                }
+            ))
         );
+
         assert_eq!(
             authority_parser("username@zupzup.org"), // input with no authority
             Ok((
-                "zupzup.org",       // the very same input
-                ("username", None)  // default values
+                "zupzup.org", // the very same input
+                // default values
+                Authority {
+                    user: "username",
+                    password: None
+                }
             ))
         );
         assert_eq!(

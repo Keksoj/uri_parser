@@ -1,7 +1,8 @@
 use nom::{self, bytes::complete::tag_no_case, error::context};
 
-use crate::lib::CustomResult;
+use crate::uri::CustomResult;
 
+/// The scheme is the beginning of a URI, either http or https
 #[derive(Debug, PartialEq, Eq)]
 pub enum Scheme {
     HTTP,
@@ -18,11 +19,10 @@ impl From<&str> for Scheme {
     }
 }
 
-// this parser returns:
 pub fn scheme_parser(
-    input: &str,
+    input: &str, // the input will be an URI
 ) -> CustomResult<
-    &str,   // the rest of the unparsed URI
+    &str,   // the rest of the unparsed URI, same type as the input
     Scheme, // the scheme of the URI
 > {
     context(

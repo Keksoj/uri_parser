@@ -1,14 +1,11 @@
-mod lib;
+mod uri;
 
-use lib::{
-    authority::{authority_parser, Authority},
-    host::Host,
-    scheme::{scheme_parser, Scheme},
-};
+use uri::uri_parser;
 
 fn main() {
-    match scheme_parser("bla://yay") {
-        Ok((unparsed, parsed)) => println!("{},{:?}", unparsed, parsed),
-        Err(e) => println!("{:#?}", e),
-    }
+    let uri_to_parse = "https://spongebob:heypatrick@en.wikipedia.org:65000/some/path?key=value&other-key=other-value#frag";
+
+    println!("We want to parse this uri:\n{}", uri_to_parse);
+
+    println!("Here it is: {:#?}", uri_parser(uri_to_parse));
 }
