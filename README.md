@@ -86,4 +86,4 @@ Definitely check out the tests, they show how testable nom is.
 
     cargo run
 
-## Many thanks to Mario Zupan!
+## Many thanks to Mario Zupan!
